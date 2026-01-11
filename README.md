@@ -68,7 +68,7 @@ edilerek kullanıldığı karmaşık yazılımlar olduğunu görüyorum. Bu dene
 yönetim sistemi üzerinde, performansı doğrudan etkileyen iki kritik bileşeni inceledim: Disk I/O yönetimini sağlayan Buffer 
 Pool mekanizması ve veriye erişim stratejisini belirleyen Heap ile Index (B+ Tree) ayrımı.
 
-1. Sistem Programlama Perspektifi: Disk Erişimi ve Buffer Pool Modern bilgisayar mimarilerinde işlemci (CPU) ve ana bellek
+*Sistem Programlama Perspektifi: Disk Erişimi ve Buffer Pool Modern bilgisayar mimarilerinde işlemci (CPU) ve ana bellek
 (RAM) hızları nanosaniyelerle ölçülürken, disk erişim süreleri (SSD olsa dahi) mikrosaniyeler veya milisaniyeler
 seviyesindedir. Bu durum, sistem programlamada "I/O Darboğazı" (I/O Bottleneck) olarak adlandırılır. Bir veritabanı, her
 sorgu için diske fiziksel erişim (syscall: read) yapmak zorunda kalsaydı, sistem kaynakları verimsiz kullanılır ve yanıt
@@ -87,7 +87,7 @@ yüksek eşzamanlılık (concurrency) için optimize edilmiş bir versiyonu olan
 algoritma, sayfaların kullanım sıklığını (usage count) takip ederek, sık kullanılan "sıcak" verilerin bellekte kalmasını 
 garanti altına alır. Bu sayede veritabanı, donanımın fiziksel limitlerini akıllı yazılım mimarisiyle aşar.
 
-2. Veri Yapıları Perspektifi: B+ Tree ve Heap Ayrımı Verinin belleğe alınması performansı artırır, ancak verinin bellekte
+*Veri Yapıları Perspektifi: B+ Tree ve Heap Ayrımı Verinin belleğe alınması performansı artırır, ancak verinin bellekte
 veya diskte "nasıl" bulunduğu ve arandığı Veri Yapıları dersinin konusudur. PostgreSQL’i diğer birçok veritabanından ayıran
 en temel özellik, Heap (Yığın) ve Index (İndeks) yapılarını birbirinden kesin çizgilerle ayırmasıdır.
 
