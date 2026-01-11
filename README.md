@@ -63,29 +63,19 @@ Ekran kaydı. 2-3 dk. açık kaynak V.T. kodu üzerinde konunun gösterimi. Vide
 
 # Açıklama
 
-* Sistem Perspektifi – Buffer Pool (Bellek Yönetimi)
+Bu çalışmada, veritabanı sistemlerinde performansı etkileyen temel unsurlar sistem programlama ve veri yapıları bakış açısıyla ele alınmıştır. Günlük hayatta kullanılan birçok yazılımın arka planında veritabanları yer almakta ve bu sistemlerin hızlı çalışması büyük önem taşımaktadır. Bu nedenle, veritabanlarının disk ve bellek gibi donanım kaynaklarını nasıl kullandığı incelenmiş; açık kaynak kodlu bir veritabanı olan PostgreSQL üzerinden örnekler verilmiştir. Çalışmada Sistem Perspektifi kapsamında Buffer Pool mekanizması, Veri Yapıları Perspektifi kapsamında ise B+ Tree indeks yapısı ve PostgreSQL’in heap + index ayrımı ele alınmıştır.
 
-Veritabanı sistemlerinde performansı belirleyen en önemli faktörlerden biri disk erişim maliyetidir. Disk erişimi, bellek erişimine kıyasla oldukça yavaştır. Bu nedenle modern veritabanları, sık kullanılan verileri doğrudan diskten okumak yerine RAM üzerinde tutarak performansı artırır. Bu yaklaşım Buffer Pool mekanizması olarak adlandırılır.
+Veritabanı sistemlerinde en maliyetli işlemlerden biri disk erişimidir. Diskten veri okumak, belleğe göre çok daha yavaş olduğu için performans üzerinde doğrudan etkilidir. Bu nedenle modern veritabanları, sık kullanılan verileri her seferinde diskten okumak yerine bellekte tutmayı tercih eder. PostgreSQL’de bu görev Buffer Pool mekanizması tarafından gerçekleştirilir. Disk üzerindeki veriler PostgreSQL’de satır bazlı değil, sayfa bazlı olarak yönetilir. Varsayılan olarak her sayfa 8 KB boyutundadır ve diskten yapılan okuma işlemleri bu sayfalar üzerinden yapılır.
 
-PostgreSQL veritabanında disk üzerindeki veriler page (sayfa) kavramı ile yönetilir. PostgreSQL’de varsayılan sayfa boyutu 8 KB’dır ve diskten yapılan okumalar satır bazlı değil, sayfa bazlıdır. Yani tek bir satır istense bile, o satırın bulunduğu tüm sayfa belleğe alınır. Bu sayfa daha sonra Buffer Pool içerisinde cache’lenir.
+Buffer Pool, diskten okunan bu sayfaların RAM üzerinde saklanmasını sağlar. Bir sayfa belleğe alındıktan sonra, aynı sayfaya tekrar erişilmek istendiğinde disk yerine doğrudan bellek kullanılır. Bu durum, özellikle sık tekrar eden sorguların çalıştığı sistemlerde önemli bir performans artışı sağlar. PostgreSQL’de Buffer Pool, shared_buffers adı verilen paylaşımlı bellek alanı içerisinde tutulur. Bu yapı sayesinde birden fazla işlem, aynı sayfayı tekrar tekrar diskten okumak zorunda kalmaz.
 
-Buffer Pool’un temel amacı, tekrar eden disk I/O işlemlerini azaltmaktır. Bir sayfa RAM’e alındıktan sonra aynı sayfaya yapılan erişimler doğrudan bellek üzerinden gerçekleşir. Bu durum, sorgu sürelerini ciddi ölçüde düşürür ve sistem genelinde performans artışı sağlar.
+Bellek sınırlı bir kaynak olduğu için, Buffer Pool’un tamamen dolması durumunda hangi sayfanın bellekten çıkarılacağına karar verilmesi gerekir. PostgreSQL bu noktada, LRU mantığına benzer şekilde çalışan CLOCK-Sweep algoritmasını kullanır. Bu algoritma, uzun süre kullanılmayan sayfaların bellekten çıkarılmasını sağlar. Ancak bu çalışmada özellikle algoritmanın detaylarından ziyade, veritabanının verileri RAM üzerinde cache’leyerek disk erişimlerini azaltma yaklaşımı üzerinde durulmuştur.
 
-PostgreSQL’de Buffer Pool, paylaşımlı bellek alanı olan shared_buffers içerisinde tutulur. Bellek sınırlı olduğu için Buffer Pool dolduğunda hangi sayfanın bellekten çıkarılacağına karar verilmesi gerekir. PostgreSQL bu noktada LRU’ya benzer şekilde çalışan CLOCK-Sweep algoritmasını kullanır. Ancak bu çalışmada özellikle algoritma detaylarından ziyade, verilerin RAM üzerinde cache’lenmesi (bellek yönetimi) konusu ele alınmıştır.
+Çalışmanın ikinci bölümünde veri yapıları perspektifinden B+ Tree indeks yapısı incelenmiştir. PostgreSQL’de indeksler, disk tabanlı sistemler için uygun olan B+ Tree veri yapısı kullanılarak oluşturulmaktadır. B+ Tree yapısında iç düğümler yalnızca anahtar değerleri ve yönlendirme bilgilerini tutarken, asıl veriler yaprak düğümlerde saklanır. Ayrıca yaprak düğümlerin birbirine bağlı olması, aralık sorgularının (range query) hızlı bir şekilde çalışmasını sağlar.
 
-Sonuç olarak Buffer Pool mekanizması, işletim sistemi, disk ve veritabanı arasındaki etkileşimi optimize ederek disk erişimlerini minimize eder ve sistem performansını artırır.
+PostgreSQL’de tablo verileri heap file olarak saklanır ve indekslerden ayrı bir yapıdadır. Bu nedenle PostgreSQL, heap + index ayrımı yapan bir veritabanı olarak tanımlanır. İndeksler, satırların kendisini değil; bu satırların heap üzerindeki konumunu gösteren adres bilgilerini tutar. Bir sorgu çalıştırıldığında önce indeks üzerinde arama yapılır, ardından elde edilen adres bilgisi kullanılarak heap dosyasındaki gerçek satıra erişilir.
 
-* Veri Yapıları Perspektifi – B+ Tree ve Heap + Index Ayrımı
-
-Veritabanı sistemlerinde veri arama işlemlerinin hızlı olması, kullanılan veri yapıları ile doğrudan ilişkilidir. PostgreSQL’de indeksler temel olarak B+ Tree veri yapısı kullanılarak oluşturulmuştur. B+ Tree, disk tabanlı sistemler için optimize edilmiş, dengeli bir ağaç yapısıdır.
-
-B+ Tree yapısında iç düğümler yalnızca anahtar değerleri ve yönlendirme bilgilerini tutarken, gerçek veriler yaprak (leaf) düğümlerde bulunur. Ayrıca yaprak düğümler birbirine bağlıdır. Bu yapı sayesinde aralık sorguları (range query) oldukça verimli şekilde çalışır.
-
-PostgreSQL’de tablo verileri heap file olarak saklanır. İndeksler ise tablodan tamamen ayrı bir yapıdır. Yani PostgreSQL, heap + index ayrımı yapan bir veritabanıdır. Bir indeks kaydı, anahtar değeri ve bu anahtarın işaret ettiği heap üzerindeki satır adresini (page id + offset) içerir.
-
-Bir sorgu çalıştırıldığında önce B+ Tree indeks üzerinde arama yapılır. Ardından bulunan adres bilgisi kullanılarak heap dosyasındaki gerçek satıra erişilir. Bu yapı, verinin disk üzerinde düzenli ve kontrollü bir şekilde erişilmesini sağlar.
-
-Bu yaklaşım sayesinde PostgreSQL, büyük veri setlerinde dahi O(log n) karmaşıklıkla arama yapabilir. Sonuç olarak B+ Tree ve heap + index ayrımı, PostgreSQL’in ölçeklenebilir ve yüksek performanslı çalışmasının temelini oluşturur.
+Sonuç olarak Buffer Pool mekanizması ve B+ Tree indeks yapısı, PostgreSQL’in hem okuma hem de yazma işlemlerinde dengeli ve yüksek performanslı çalışmasını sağlar. Disk erişimlerinin azaltılması, belleğin verimli kullanılması ve uygun veri yapılarının tercih edilmesi sayesinde PostgreSQL, büyük veri kümeleri üzerinde dahi etkili bir şekilde çalışabilmektedir.
 
 ## VT Üzerinde Gösterilen Kaynak Kodları
 
