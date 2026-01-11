@@ -46,13 +46,13 @@ DB diske yazarken:
 
 # Özet Tablo
 
-| Kavram      | Bellek          | Disk / DB      |
-| ----------- | --------------- | -------------- |
-| Adresleme   | Pointer         | Page + Offset  |
-| Hız         | O(1)            | Page IO        |
-| PK          | Yok             | Index anahtarı |
-| Veri yapısı | Array / Pointer | B+Tree         |
-| Cache       | CPU cache       | Buffer Pool    |
+| Kavram      | Bellek                                   | Disk / DB              |
+| ----------- | ---------------                          | --------------         |
+| Adresleme   | Bellekte tutulan sayfaya doğrudan erişim | Page ID + Offset       |
+| Hız         | RAM üzerinden hızlı erişim               | Disk Page I/O maliyeti |
+| PK          | Yok                                      | B+ Tree Index anahtarı |
+| Veri yapısı | Bufferr (sayfa kopyası)                  | B+Tree + Heap          |
+| Cache       | Buffer Pool (RAM)                        | Disk sayfaları         |
 
 ---
 
