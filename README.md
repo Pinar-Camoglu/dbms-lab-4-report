@@ -111,7 +111,7 @@ gördüğümüz kavramların gerçek dünyadaki en güçlü uygulamalarından bi
 
 ## VT Üzerinde Gösterilen Kaynak Kodları
 
-Buffer Pool mekanizması için PostgreSQL kaynak kodları [Linki]([https://...](https://github.com/postgres/postgres/tree/master/src/backend/storage/buffer)) \
-B+ Tree indeks yapısı için PostgreSQL nbtree kaynak kodları [Linki]([https://...](https://github.com/postgres/postgres/tree/master/src/backend/access/nbtree)) \
+Buffer Pool mekanizması için PostgreSQL kaynak kodları [Linki](https://github.com/postgres/postgres/tree/master/src/backend/storage/buffer) \
+B+ Tree indeks yapısı için PostgreSQL nbtree kaynak kodları [Linki](https://github.com/postgres/postgres/tree/master/src/backend/access/nbtree) \
 
 
