@@ -23,19 +23,19 @@ Aşağıda kutucuk (checkbox) ile gösterilen maddelerden en az birini seçtiği
 
 ### Buffer Pool
 
-- [ ]  Veritabanları, Sık kullanılan sayfaları bellekte (RAM) kopyalar mı (caching) ?
+- [X]  Veritabanları, Sık kullanılan sayfaları bellekte (RAM) kopyalar mı (caching) ?
 
 - [ ]  LRU / CLOCK gibi algoritmaları
 - [ ]  Diske yapılan I/O nasıl minimize ederler?
 
 # 2. Veri Yapıları Perspektifi
 
-- [ ]  B+ Tree Veri Yapıları VT' lerde nasıl kullanılır?
+- [X]  B+ Tree Veri Yapıları VT' lerde nasıl kullanılır?
 - [ ]  VT' lerde hangi veri yapıları hangi amaçlarla kullanılır?
 - [ ]  Clustered vs Non-Clustered Index Kavramı
 - [ ]  InnoDB satırı diskte nasıl durur?
 - [ ]  LSM-tree (LevelDB, RocksDB) farkı
-- [ ]  PostgreSQL heap + index ayrımı
+- [X]  PostgreSQL heap + index ayrımı
 
 DB diske yazarken:
 
@@ -61,24 +61,35 @@ Ekran kaydı. 2-3 dk. açık kaynak V.T. kodu üzerinde konunun gösterimi. Vide
 
 ---
 
-# Açıklama (Ort. 600 kelime)
+# Açıklama
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacinia luctus urna, vel aliquet lacus facilisis ac. Donec quis placerat orci, efficitur consectetur lacus. Sed rhoncus erat ex, at sagittis velit mollis et. Aliquam enim orci, sollicitudin sit amet libero quis, mollis ultricies risus. Fusce tempor, felis a consequat tristique, dolor magna convallis nulla, vel ullamcorper magna mauris non ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam quis imperdiet ex, at blandit sapien. Aliquam lacinia erat ac ipsum fringilla, quis vestibulum augue posuere. Nulla in enim nulla. Nunc euismod odio mauris, sed sollicitudin ex condimentum non. In efficitur egestas enim. Fusce tempus erat quis placerat convallis.
+* Sistem Perspektifi – Buffer Pool (Bellek Yönetimi)
 
-Nam sit amet tincidunt ante. Pellentesque sit amet quam interdum, pellentesque dui vel, iaculis elit. Donec sed dui sodales nulla dignissim tincidunt. Maecenas semper metus id fermentum vulputate. Pellentesque lobortis hendrerit venenatis. Nullam imperdiet, ex eget ultricies egestas, mauris nunc aliquam ante, sed consectetur tellus ex vel leo. Nunc ut erat dapibus, auctor dolor eu, pretium sem. In lacinia congue eros et finibus. Aenean auctor, leo a feugiat placerat, urna felis lacinia purus, laoreet volutpat mi nisl eget dui. Ut vitae condimentum leo.
+Veritabanı sistemlerinde performansı belirleyen en önemli faktörlerden biri disk erişim maliyetidir. Disk erişimi, bellek erişimine kıyasla oldukça yavaştır. Bu nedenle modern veritabanları, sık kullanılan verileri doğrudan diskten okumak yerine RAM üzerinde tutarak performansı artırır. Bu yaklaşım Buffer Pool mekanizması olarak adlandırılır.
 
-Maecenas ex diam, vehicula et nulla vel, mattis viverra metus. Nam at ex scelerisque, semper augue lobortis, semper est. Etiam id pretium odio, eget rutrum neque. Pellentesque blandit magna vel aliquam gravida. Nullam massa nisl, imperdiet at dapibus non, cursus vehicula turpis. Vestibulum rutrum hendrerit augue. Aliquam id nisi id arcu tempor venenatis vel nec erat. Morbi sed posuere erat. Morbi et sollicitudin urna. Suspendisse ullamcorper vitae purus sit amet sodales. Nam ut tincidunt ipsum, ut varius erat. Duis congue magna nec euismod condimentum. In hac habitasse platea dictumst. Nunc mattis odio sed enim laoreet imperdiet. In hac habitasse platea dictumst. Nullam tincidunt quis.
+PostgreSQL veritabanında disk üzerindeki veriler page (sayfa) kavramı ile yönetilir. PostgreSQL’de varsayılan sayfa boyutu 8 KB’dır ve diskten yapılan okumalar satır bazlı değil, sayfa bazlıdır. Yani tek bir satır istense bile, o satırın bulunduğu tüm sayfa belleğe alınır. Bu sayfa daha sonra Buffer Pool içerisinde cache’lenir.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacinia luctus urna, vel aliquet lacus facilisis ac. Donec quis placerat orci, efficitur consectetur lacus. Sed rhoncus erat ex, at sagittis velit mollis et. Aliquam enim orci, sollicitudin sit amet libero quis, mollis ultricies risus. Fusce tempor, felis a consequat tristique, dolor magna convallis nulla, vel ullamcorper magna mauris non ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam quis imperdiet ex, at blandit sapien. Aliquam lacinia erat ac ipsum fringilla, quis vestibulum augue posuere. Nulla in enim nulla. Nunc euismod odio mauris, sed sollicitudin ex condimentum non. In efficitur egestas enim. Fusce tempus erat quis placerat convallis.
+Buffer Pool’un temel amacı, tekrar eden disk I/O işlemlerini azaltmaktır. Bir sayfa RAM’e alındıktan sonra aynı sayfaya yapılan erişimler doğrudan bellek üzerinden gerçekleşir. Bu durum, sorgu sürelerini ciddi ölçüde düşürür ve sistem genelinde performans artışı sağlar.
 
-Nam sit amet tincidunt ante. Pellentesque sit amet quam interdum, pellentesque dui vel, iaculis elit. Donec sed dui sodales nulla dignissim tincidunt. Maecenas semper metus id fermentum vulputate. Pellentesque lobortis hendrerit venenatis. Nullam imperdiet, ex eget ultricies egestas, mauris nunc aliquam ante, sed consectetur tellus ex vel leo. Nunc ut erat dapibus, auctor dolor eu, pretium sem. In lacinia congue eros et finibus. Aenean auctor, leo a feugiat placerat, urna felis lacinia purus, laoreet volutpat mi nisl eget dui. Ut vitae condimentum leo.
+PostgreSQL’de Buffer Pool, paylaşımlı bellek alanı olan shared_buffers içerisinde tutulur. Bellek sınırlı olduğu için Buffer Pool dolduğunda hangi sayfanın bellekten çıkarılacağına karar verilmesi gerekir. PostgreSQL bu noktada LRU’ya benzer şekilde çalışan CLOCK-Sweep algoritmasını kullanır. Ancak bu çalışmada özellikle algoritma detaylarından ziyade, verilerin RAM üzerinde cache’lenmesi (bellek yönetimi) konusu ele alınmıştır.
 
-Maecenas ex diam, vehicula et nulla vel, mattis viverra metus. Nam at ex scelerisque, semper augue lobortis, semper est. Etiam id pretium odio, eget rutrum neque. Pellentesque blandit magna vel aliquam gravida. Nullam massa nisl, imperdiet at dapibus non, cursus vehicula turpis. Vestibulum rutrum hendrerit augue. Aliquam id nisi id arcu tempor venenatis vel nec erat. Morbi sed posuere erat. Morbi et sollicitudin urna. Suspendisse ullamcorper vitae purus sit amet sodales. Nam ut tincidunt ipsum, ut varius erat. Duis congue magna nec euismod condimentum. In hac habitasse platea dictumst. Nunc mattis odio sed enim laoreet imperdiet. In hac habitasse platea dictumst. Nullam tincidunt quis.
+Sonuç olarak Buffer Pool mekanizması, işletim sistemi, disk ve veritabanı arasındaki etkileşimi optimize ederek disk erişimlerini minimize eder ve sistem performansını artırır.
+
+* Veri Yapıları Perspektifi – B+ Tree ve Heap + Index Ayrımı
+
+Veritabanı sistemlerinde veri arama işlemlerinin hızlı olması, kullanılan veri yapıları ile doğrudan ilişkilidir. PostgreSQL’de indeksler temel olarak B+ Tree veri yapısı kullanılarak oluşturulmuştur. B+ Tree, disk tabanlı sistemler için optimize edilmiş, dengeli bir ağaç yapısıdır.
+
+B+ Tree yapısında iç düğümler yalnızca anahtar değerleri ve yönlendirme bilgilerini tutarken, gerçek veriler yaprak (leaf) düğümlerde bulunur. Ayrıca yaprak düğümler birbirine bağlıdır. Bu yapı sayesinde aralık sorguları (range query) oldukça verimli şekilde çalışır.
+
+PostgreSQL’de tablo verileri heap file olarak saklanır. İndeksler ise tablodan tamamen ayrı bir yapıdır. Yani PostgreSQL, heap + index ayrımı yapan bir veritabanıdır. Bir indeks kaydı, anahtar değeri ve bu anahtarın işaret ettiği heap üzerindeki satır adresini (page id + offset) içerir.
+
+Bir sorgu çalıştırıldığında önce B+ Tree indeks üzerinde arama yapılır. Ardından bulunan adres bilgisi kullanılarak heap dosyasındaki gerçek satıra erişilir. Bu yapı, verinin disk üzerinde düzenli ve kontrollü bir şekilde erişilmesini sağlar.
+
+Bu yaklaşım sayesinde PostgreSQL, büyük veri setlerinde dahi O(log n) karmaşıklıkla arama yapabilir. Sonuç olarak B+ Tree ve heap + index ayrımı, PostgreSQL’in ölçeklenebilir ve yüksek performanslı çalışmasının temelini oluşturur.
 
 ## VT Üzerinde Gösterilen Kaynak Kodları
 
-Açıklama [Linki](https://...) \
-Açıklama [Linki](https://...) \
-Açıklama [Linki](https://...) \
-... \
-...
+Buffer Pool mekanizması için PostgreSQL kaynak kodları [Linki]([https://...](https://github.com/postgres/postgres/tree/master/src/backend/storage/buffer)) \
+B+ Tree indeks yapısı için PostgreSQL nbtree kaynak kodları [Linki]([https://...](https://github.com/postgres/postgres/tree/master/src/backend/access/nbtree)) \
+
+
